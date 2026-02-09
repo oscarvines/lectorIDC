@@ -3,11 +3,11 @@ import pandas as pd
 from datetime import datetime, timedelta
 from extractor_idc import extraer_datos_idc
 
-st.set_page_config(page_title="Auditoría V3.1", layout="wide")
-st.title("📑 Auditoría Laboral (Versión Final Blindada)")
+st.set_page_config(page_title="Auditoría V3.3", layout="wide")
+st.title("📑 Auditoría Laboral (V3.3)")
 
 with st.sidebar:
-    h_conv = st.number_input("Horas Convenio Anual:", value=1800.0)
+    h_conv = st.number_input("Horas Convenio Anual (100%):", value=1800.0)
     files = st.file_uploader("Subir PDFs", type="pdf", accept_multiple_files=True)
     if st.button("🚀 Calcular"):
         if files:
@@ -16,54 +16,43 @@ with st.sidebar:
             st.rerun()
 
 if 'raw' in st.session_state and st.session_state.raw:
-    anio = st.selectbox("Año a auditar:", [2024, 2023, 2022])
+    anio = st.selectbox("Año:", [2024, 2023, 2022])
     dias_anio = 366 if (anio % 4 == 0 and anio % 100 != 0) or (anio % 400 == 0) else 365
-    valor_hora_dia = h_conv / dias_anio
+    v_h_d = h_conv / dias_anio
 
-    res_final = []
+    res = []
+    # Obtenemos nombres únicos
     personas = {r['Nombre'] for r in st.session_state.raw}
     
     for p in personas:
-        idcs_p = [r for r in st.session_state.raw if r['Nombre'] == p]
-        idcs_p.sort(key=lambda x: x['Desde'])
+        idcs = sorted([r for r in st.session_state.raw if r['Nombre'] == p], key=lambda x: x['Desde'])
+        h_t, h_i = 0.0, 0.0
         
-        h_teoricas = 0.0
-        h_it = 0.0
-        d_it = 0
-        d_alta = 0
-        
-        # Mapa de un solo barrido: día a día
-        fecha_ini = datetime(anio, 1, 1)
+        fecha_inicio_anio = datetime(anio, 1, 1)
         for d in range(dias_anio):
-            dia = fecha_ini + timedelta(days=d)
-            
-            # Buscamos el IDC que manda hoy
-            vigente = None
-            for idc in idcs_p:
+            dia = fecha_inicio_anio + timedelta(days=d)
+            # Buscar IDC vigente (el último que empezó antes o hoy)
+            vig = None
+            for idc in idcs:
                 if idc['Desde'] <= dia <= idc['Hasta']:
-                    vigente = idc
+                    vig = idc
             
-            if vigente:
-                f_a = datetime.strptime(vigente['Alta'], "%d-%m-%Y")
-                f_b = datetime.strptime(vigente['Baja'], "%d-%m-%Y") if vigente['Baja'] != "ACTIVO" else datetime(2099,1,1)
+            if vig:
+                f_a = datetime.strptime(vig['Alta'], "%d-%m-%Y")
+                f_b = datetime.strptime(vig['Baja'], "%d-%m-%Y") if vig['Baja'] != "ACTIVO" else datetime(2099,1,1)
                 
                 if f_a <= dia <= f_b:
-                    d_alta += 1
-                    # Factor de reducción: 500 -> 0.5
-                    factor = 1.0 if vigente['CTP'] == 0 else vigente['CTP'] / 1000.0
-                    h_teoricas += valor_hora_dia * factor
-                    
-                    # Verificamos si este día hay IT real
-                    for it_i, it_f in vigente['Tramos_IT']:
-                        if it_i <= dia <= it_f:
-                            d_it += 1
-                            h_it += valor_hora_dia * factor
-                            break
+                    factor = 1.0 if vig['CTP'] == 0 else vig['CTP'] / 1000.0
+                    h_t += v_h_d * factor
+                    # Check IT
+                    if any(it[0] <= dia <= it[1] for it in vig['Tramos_IT']):
+                        h_i += v_h_d * factor
 
-        res_final.append({
-            "Nombre": p, "Días Alta": d_alta, "Días IT": d_it,
-            "Horas Teóricas": h_teoricas, "Horas IT": h_it, "Horas Efectivas": h_teoricas - h_it
-        })
+        res.append({"Nombre": p, "Horas Teóricas": h_t, "Horas IT": h_i, "Horas Efectivas": h_t - h_i})
 
-    st.subheader(f"✅ Informe Auditoría - Año {anio}")
-    st.dataframe(pd.DataFrame(res_final).style.format("{:.2f}", subset=['Horas Teóricas', 'Horas IT', 'Horas Efectivas']))
+    # CORRECCIÓN DE FORMATO AQUÍ: Solo aplicamos decimales a las columnas numéricas
+    df_final = pd.DataFrame(res)
+    columnas_num = ["Horas Teóricas", "Horas IT", "Horas Efectivas"]
+    
+    st.subheader(f"✅ Resultados {anio}")
+    st.dataframe(df_final.style.format("{:.2f}", subset=columnas_num))
