@@ -1,13 +1,13 @@
 === EXTRACCIÓN COMPLETA DEL PDF (LO QUE VE LA MÁQUINA) ===
 
 Idc
-Informe de Datos para la Cotización-Trabajadores por Cuenta Ajena-
+Informe de Datos para la Cotización - Trabajadores por Cuenta Ajena -
 DATOS IDENTIFICATIVOS DEL TRABAJADOR/A
 NOMBRE Y APELLIDOS: CLAUDIA CABALLERO MINGUEZ
 NSS: 48 1059436230 DOC.IDENTIFICATIVO: D.N.I. NUM: 016095080W SEXO: MUJER NACIMIENTO: 21-12-1999
 DATOS IDENTIFICATIVOS DE LA EMPRESA
 RAZÓN SOCIAL: BETTERNOSTICS SL CCC: 31 113549541 DNI/NIE/CIF: 9 0B71411037
-ACTIVIDAD ECONOMICA: 7211 Investigación y desarrollo experimental REGIMEN: RÉGIMEN GENERAL
+ACTIVIDAD ECONÓMICA: 7211 Investigación y desarrollo experimental REGIMEN: RÉGIMEN GENERAL
 OTROS COLECTIVOS SIN ESPECIFICAR
 PERIODO: DESDE 01-10-2024.
 OTROS DATOS
@@ -34,7 +34,7 @@ DESDE: HASTA:
 SUSPENSIÓN POR SITUACIONES QUE PUEDEN DAR ORIGEN A PRESTACIONES POR CORTA DURACIÓN DEL SISTEMA DE LA SEGURIDAD SOCIAL (Tipo de suspensión/Desde/Hasta)
 ***SIN SITUACIONES***
 TIPO DE PECULIARIDAD PORCENTAJE/TIPO CUANTÍA/MES FRACCIÓN DE CUOTA DESDE HASTA CLV
-01 BONIFICACION INEM 40,00 03 CONT.COMUN-C.EMPRESA 01-10-2024 0KK
+01 BONIFICACIÓN INEM 40,00 03 CONT.COMUN-C.EMPRESA 01-10-2024 0KK
 ***FIN DE PECULIARIDADES***
 TOTAL CLV CBG
 TIPOS DE COTIZACIÓN* CONTINGENCIAS PROFESIONALES: IT: 0,80 I.M.S.: 0,70 TOTAL: 1,50 DESEMPLEO: 7,05
@@ -45,7 +45,7 @@ El usuario principal
 Fdo.:
 REFERENCIAS ELECTRÓNICAS
 REFERENCIA: A2072509000001 FECHA: 03-09-2025 HORA: 13:35:54 HUELLA: MJ3NXPNO 01/01
-Este documento tiene carácter exclusivamente informativo y no genera ni expectativas de derecho en al cotización a la Seguridad Social
+Este documento tiene carácter exclusivamente informativo y no genera ni expectativas de derecho en la cotización a la Seguridad Social
 *En los datos marcados con un asterisco(*) el valor que se muestra es el correspondiente a la fecha de finalización del PERIODO.
 Este documento no será válido sin la referencia electrónica.
 A207
@@ -55,10 +55,10 @@ A207
 
 [!] SECCIÓN PECULIARIDADES:
 TIPO DE PECULIARIDAD PORCENTAJE/TIPO CUANTÍA/MES FRACCIÓN DE CUOTA DESDE HASTA CLV
-01 BONIFICACION INEM 40,00 03 CONT.COMUN-C.EMPRESA 01-10-2024 0KK
+01 BONIFICACIÓN INEM 40,00 03 CONT.COMUN-C.EMPRESA 01-10-2024 0KK
 ***FIN DE PECULIARIDADES***
 TOTAL CLV CBG
 TIPOS DE COTIZACIÓN* CONTINGENCIAS PROFESIONALES: IT: 0,80 I.M.S.: 0,70 TOTAL: 1,50 DESEMPLEO: 7,05
 De conformidad con los términos de la autorización número 249909, concedida en fecha 21/03/2016 a ENRIQUE AGUADO AGUARON por la Tesorería General de la Seguridad Social, certifico que estos
-datos han sido tran
+datos han sido transmitidos.
 
