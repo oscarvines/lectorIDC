@@ -75,6 +75,9 @@ if 'raw' in st.session_state and st.session_state.raw:
         if d_alta > 0:
             res_final.append({
                 "Nombre": p,
+                "DNI": idcs_p[0]['DNI_Trabajador'],
+                "CIF Empresa": idcs_p[0]['NIF_Empresa'],
+                "Empresa": idcs_p[0]['Empresa'],
                 "Estado": "⚠️ INCOMPLETO" if hay_hueco else "✅ OK",
                 "Inicio Contrato": f_contrato_orig.strftime("%d-%m-%Y"),
                 "Inicio Auditado": primer_dia.strftime("%d-%m-%Y"),

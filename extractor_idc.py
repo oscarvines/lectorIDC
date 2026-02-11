@@ -8,13 +8,26 @@ def extraer_datos_idc(file_object):
         texto = ""
         for page in pdf.pages: texto += page.extract_text() + "\n"
 
-        # 1. Identificación
+        # 1. Identificación Trabajador/a
         nombre = re.search(r"NOMBRE Y APELLIDOS:\s*(.*)", texto).group(1).strip()
-        # Fecha ALTA (campo administrativo)
+        
+        # --- NUEVO: DNI Trabajador ---
+        dni_trab_m = re.search(r"NUM:\s*([A-Z0-9]+)", texto)
+        dni_trabajador = dni_trab_m.group(1).strip() if dni_trab_m else "N/A"
+
+        # --- NUEVO: Datos Empresa (CIF y Razón Social) ---
+        # Buscamos la Razón Social hasta que encuentre el CCC
+        empresa_m = re.search(r"RAZÓN SOCIAL:\s*(.*?)\s*CCC:", texto)
+        razon_social = empresa_m.group(1).strip() if empresa_m else "DESCONOCIDA"
+
+        # Buscamos el CIF (limpiando el prefijo 9 y espacios)
+        # El patrón busca 9 caracteres alfanuméricos tras DNI/NIE/CIF:
+        cif_emp_m = re.search(r"DNI/NIE/CIF:\s*[\d\s]*([A-Z0-9]{9})", texto)
+        nif_empresa = cif_emp_m.group(1).strip() if cif_emp_m else "N/A"
+
+        # 2. Fechas de Alta y Contrato
         alta = re.search(r"ALTA:\s*(\d{2}-\d{2}-\d{4})", texto).group(1).strip()
         
-        # 2. Fecha Inicio Contrato Real (Buscamos el patrón FECHA: que mencionas)
-        # Priorizamos el campo "FECHA:" que suele ser el inicio de la relación
         fecha_con_m = re.search(r"FECHA:\s*(\d{2}-\d{2}-\d{4})", texto)
         inicio_contrato = fecha_con_m.group(1).strip() if fecha_con_m else alta
 
@@ -35,15 +48,23 @@ def extraer_datos_idc(file_object):
         if "TIPO DE PECULIARIDAD" in texto:
             bloque = texto.split("TIPO DE PECULIARIDAD")[1].split("***")[0]
             for linea in bloque.split("\n"):
-                if any(x in linea.upper() for x in ["IT.", "ENFERMEDAD", "ACCIDENTE", "22 "]) and "BONIF" not in linea.upper():
+                if any(x in linea.upper() for x in ["IT.", "ENFERMEDAD", "ACCIDENTE", "22 ", "29 ", "BUI"]) and "BONIF" not in linea.upper():
                     fechas = re.findall(r"(\d{2}-\d{2}-\d{4})", linea)
                     if len(fechas) >= 2:
                         tramos_it.append((datetime.strptime(fechas[-2], "%d-%m-%Y"), datetime.strptime(fechas[-1], "%d-%m-%Y")))
 
+        # --- RESULTADOS: Añadimos los nuevos campos al diccionario ---
         resultados.append({
-            "Nombre": nombre, "CTP": ctp,
-            "Desde_Info": f_desde_info, "Hasta_Info": f_hasta_info, 
+            "Nombre": nombre, 
+            "DNI_Trabajador": dni_trabajador,
+            "NIF_Empresa": nif_empresa,
+            "Empresa": razon_social,
+            "CTP": ctp,
+            "Desde_Info": f_desde_info, 
+            "Hasta_Info": f_hasta_info, 
             "Inicio_Contrato": datetime.strptime(inicio_contrato, "%d-%m-%Y"),
-            "Tramos_IT": tramos_it, "Alta": alta, "Baja": baja
+            "Tramos_IT": tramos_it, 
+            "Alta": alta, 
+            "Baja": baja
         })
     return resultados
