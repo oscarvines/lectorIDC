@@ -5,10 +5,10 @@ from extractor_idc import extraer_datos_idc
 import io
 from st_supabase_connection import SupabaseConnection
 
-st.set_page_config(page_title="Auditoría V4.8 - Supabase Connection", layout="wide")
-st.title("📑 Auditoría Laboral (V4.8 - Sincronización Integrada)")
+st.set_page_config(page_title="Auditoría V4.9 - Registro CIF", layout="wide")
+st.title("📑 Auditoría Laboral (V4.9 - Trazabilidad CIF)")
 
-# --- CONEXIÓN A SUPABASE (Usa los mismos secrets que el Modelo 190) ---
+# --- CONEXIÓN A SUPABASE ---
 conn = st.connection("supabase", type=SupabaseConnection)
 
 # --- FUNCIONES DE APOYO ---
@@ -63,6 +63,7 @@ def sincronizar_historial_supabase(datos_raw, h_conv):
                     "ejercicio": anio_proc,
                     "nif": idcs_p[0]['DNI_Trabajador'],
                     "nombre": p,
+                    "nif_empresa": idcs_p[0]['NIF_Empresa'], # <--- SE SUBE EL CIF
                     "cliente": idcs_p[0]['Empresa'],
                     "estado": "⚠️ INCOMPLETO" if hay_hueco else "✅ OK",
                     "inicio_contrato": f_contrato_orig.strftime("%Y-%m-%d"),
@@ -77,7 +78,6 @@ def sincronizar_historial_supabase(datos_raw, h_conv):
 
     if registros_totales:
         try:
-            # Usamos st.connection para enviar los datos
             conn.table("resumen_idcs_central").upsert(
                 registros_totales, 
                 on_conflict='nif,ejercicio'
@@ -142,7 +142,7 @@ if 'raw' in st.session_state and st.session_state.raw:
             res_final.append({
                 "Nombre": p,
                 "DNI": idcs_p[0]['DNI_Trabajador'],
-                "CIF Empresa": idcs_p[0]['NIF_Empresa'],
+                "CIF Empresa": idcs_p[0]['NIF_Empresa'], # <--- SE MUESTRA EN PANTALLA
                 "Empresa": idcs_p[0]['Empresa'],
                 "Estado": "⚠️ INCOMPLETO" if hay_hueco else "✅ OK",
                 "Inicio Contrato": f_contrato_orig.strftime("%d-%m-%Y"),
