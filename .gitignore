@@ -1,3 +1,19 @@
+# Ignorar configuración de Streamlit (claves de Supabase)
+.streamlit/
+
+# Ignorar entorno virtual
+venv/
+env/
+
+# Ignorar archivos temporales de Python
 __pycache__/
 *.pyc
-venv/
+
+# Ignorar archivos del sistema Mac
+.DS_Store
+
+# --- ARCHIVOS DE DATOS (PDF y EXCEL) ---
+*.pdf
+*.xlsx
+*.xls
+*.csv
