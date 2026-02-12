@@ -59,12 +59,15 @@ def sincronizar_historial_supabase(datos_raw, h_conv):
                     hay_hueco = True
 
             if d_alta > 0:
+                # Calculamos el CTP medio o tomamos el del último registro vigente
+                ultimo_ctp = idcs_p[-1]['CTP'] 
                 registros_totales.append({
                     "ejercicio": anio_proc,
                     "nif": idcs_p[0]['DNI_Trabajador'],
                     "nombre": p,
-                    "nif_empresa": idcs_p[0]['NIF_Empresa'], # <--- SE SUBE EL CIF
+                    "nif_empresa": idcs_p[0]['NIF_Empresa'],
                     "cliente": idcs_p[0]['Empresa'],
+                    "ctp": ultimo_ctp, # <--- AÑADE ESTO PARA SUPABASE
                     "estado": "⚠️ INCOMPLETO" if hay_hueco else "✅ OK",
                     "inicio_contrato": f_contrato_orig.strftime("%Y-%m-%d"),
                     "inicio_auditado": primer_dia.strftime("%Y-%m-%d"),
@@ -139,10 +142,13 @@ if 'raw' in st.session_state and st.session_state.raw:
                 hay_hueco = True
 
         if d_alta > 0:
+            # Extraemos el CTP del último IDC de este trabajador para mostrarlo
+            ctp_valor = idcs_p[-1]['CTP']
+            dedicacion_texto = f"{ctp_valor / 10}%" if ctp_valor > 0 else "100%"
             res_final.append({
                 "Nombre": p,
                 "DNI": idcs_p[0]['DNI_Trabajador'],
-                "CIF Empresa": idcs_p[0]['NIF_Empresa'], # <--- SE MUESTRA EN PANTALLA
+                "CIF Empresa": idcs_p[0]['NIF_Empresa'],
                 "Empresa": idcs_p[0]['Empresa'],
                 "Estado": "⚠️ INCOMPLETO" if hay_hueco else "✅ OK",
                 "Inicio Contrato": f_contrato_orig.strftime("%d-%m-%Y"),
@@ -151,9 +157,9 @@ if 'raw' in st.session_state and st.session_state.raw:
                 "Días IT": d_it,
                 "Horas Teóricas": round(h_t, 2),
                 "Horas IT": round(h_i, 2),
-                "Horas Efectivas": round(h_t - h_i, 2)
+                "Horas Efectivas": round(h_t - h_i, 2),
+                "Dedicación": dedicacion_texto  # <--- ESTA ES LA LÍNEA NUEVA
             })
-
     if res_final:
         df_final = pd.DataFrame(res_final)
         st.subheader(f"✅ Vista Previa Auditoría {anio}")
