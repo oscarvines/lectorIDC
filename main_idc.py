@@ -73,6 +73,10 @@ if 'raw' in st.session_state and st.session_state.raw:
                 hay_hueco = True
 
         if d_alta > 0:
+            # --- NUEVA LÓGICA PARA EL CTP ---
+            ctp_valor = idcs_p[-1]['CTP']
+            # Convertimos 500 -> 50% o 0/1000 -> 100%
+            dedicacion_texto = f"{ctp_valor / 10}%" if (ctp_valor > 0 and ctp_valor < 1000) else "100%"
             res_final.append({
                 "Nombre": p,
                 "DNI": idcs_p[0]['DNI_Trabajador'],
@@ -85,9 +89,9 @@ if 'raw' in st.session_state and st.session_state.raw:
                 "Días IT": d_it,
                 "Horas Teóricas": round(h_t, 2),
                 "Horas IT": round(h_i, 2),
-                "Horas Efectivas": round(h_t - h_i, 2)
+                "Horas Efectivas": round(h_t - h_i, 2),
+                "Dedicación": dedicacion_texto # <--- NUEVA COLUMNA
             })
-
     if res_final:
         df_final = pd.DataFrame(res_final)
         st.subheader(f"✅ Informe Auditoría {anio}")
