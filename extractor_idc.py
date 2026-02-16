@@ -44,8 +44,8 @@ def extraer_datos_idc(file_object):
             nombre = nombre_m.group(1).strip() if nombre_m else f"DESCONOCIDO ({nombre_archivo_raw})"
 
             # 2. DNI Trabajador
-            dni_m = re.search(r"NUM:\s*([A-Z0-9]+)", texto_completo)
-            dni_trabajador = dni_m.group(1).strip() if dni_m else "N/A"
+            dni_trab_m = re.search(r"num:\s*[A-Z0-9]*?(\d{8}[A-Z])", texto_completo, re.IGNORECASE)
+            dni_trabajador = dni_trab_m.group(1) if dni_trab_m else "N/A"
 
             # 3. Empresa
             empresa_m = re.search(r"RAZÓN SOCIAL:\s*(.*?)\s*CCC:", texto_completo)
