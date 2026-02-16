@@ -12,8 +12,8 @@ def extraer_datos_idc(file_object):
         nombre = re.search(r"NOMBRE Y APELLIDOS:\s*(.*)", texto).group(1).strip()
         
         # --- NUEVO: DNI Trabajador ---
-        dni_trab_m = re.search(r"NUM:\s*([A-Z0-9]+)", texto)
-        dni_trabajador = dni_trab_m.group(1).strip() if dni_trab_m else "N/A"
+        dni_trab_m = re.search(r"num:\s*[A-Z0-9]*?(\d{8}[A-Z])", texto, re.IGNORECASE)
+        dni_trabajador = dni_trab_m.group(1) if dni_trab_m else "N/A"
 
         # --- NUEVO: Datos Empresa (CIF y Razón Social) ---
         # Buscamos la Razón Social hasta que encuentre el CCC
@@ -24,7 +24,6 @@ def extraer_datos_idc(file_object):
         # El patrón busca 9 caracteres alfanuméricos tras DNI/NIE/CIF:
         cif_emp_m = re.search(r"DNI/NIE/CIF:\s*[\d\s]*([A-Z0-9]{9})", texto)
         nif_empresa = cif_emp_m.group(1).strip() if cif_emp_m else "N/A"
-
         # 2. Fechas de Alta y Contrato
         alta = re.search(r"ALTA:\s*(\d{2}-\d{2}-\d{4})", texto).group(1).strip()
         
