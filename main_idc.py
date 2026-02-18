@@ -18,6 +18,7 @@ if "raw" not in st.session_state: st.session_state.raw = []
 with st.sidebar:
     st.header("1. Configuración")
     h_conv = st.number_input("Horas Convenio Anual:", value=1800.0)
+    tipo_general = st.number_input("Tipo Cotización General (%):", value=23.60, step=0.01)
     st.markdown("---")
     st.subheader("👤 Datos Autónomos")
     emp_manual = st.text_input("Empresa Cliente:", value="")
@@ -98,7 +99,14 @@ if st.session_state.raw:
             # Dedicación: Recuperamos lógica de producción
             ultimo_ctp = idcs_p[-1].get('CTP', 0)
             dedicacion_texto = "100%" if (es_aut or ultimo_ctp in [0, 1000]) else f"{(ultimo_ctp/10):.2f}%"
-            
+            # 2. Recuperamos los valores individuales para poder sumarlos
+            # Usamos .get() para evitar errores y asegurarnos de que sean números
+            c_it = idcs_p[0].get('Cotizacion_IT', 0.0)
+            c_ims = idcs_p[0].get('Cotizacion_IMS', 0.0)
+            c_des = idcs_p[0].get('Cotizacion_Desempleo', 0.0)
+            # 3. Calculamos el TOTAL (Suma de los 4 conceptos)
+            total_cotiz = round(tipo_general + c_it + c_ims + c_des, 2)
+
             res_final.append({
                 "Nombre": p,
                 "DNI": idcs_p[0]['DNI_Trabajador'],
@@ -113,9 +121,11 @@ if st.session_state.raw:
                 "Horas IT": round(h_i, 2),
                 "Horas Efectivas": round(h_t - h_i, 2),
                 "Dedicación": dedicacion_texto,
+                "Cotización General": tipo_general,
                 "Cotización IT": idcs_p[0].get('Cotizacion_IT', 0.0),
                 "Cotización IMS": idcs_p[0].get('Cotizacion_IMS', 0.0),
-                "Cotización Desempleo": idcs_p[0].get('Cotizacion_Desempleo', 0.0)
+                "Cotización Desempleo": idcs_p[0].get('Cotizacion_Desempleo', 0.0),
+                "Total Cotización %": total_cotiz
             })
 
     if res_final:
