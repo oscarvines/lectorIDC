@@ -112,7 +112,10 @@ if st.session_state.raw:
                 "Horas Teóricas": round(h_t, 2),
                 "Horas IT": round(h_i, 2),
                 "Horas Efectivas": round(h_t - h_i, 2),
-                "Dedicación": dedicacion_texto
+                "Dedicación": dedicacion_texto,
+                "Cotización IT": idcs_p[0].get('Cotizacion_IT', 0.0),
+                "Cotización IMS": idcs_p[0].get('Cotizacion_IMS', 0.0),
+                "Cotización Desempleo": idcs_p[0].get('Cotizacion_Desempleo', 0.0)
             })
 
     if res_final:

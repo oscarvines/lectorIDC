@@ -35,7 +35,10 @@ def extraer_datos_idc(file_object):
                         "Nombre": nombre, "DNI_Trabajador": dni_trabajador, "NIF_Empresa": "PENDIENTE",
                         "Empresa": "PENDIENTE", "CTP": 0, "Es_Autonomo": True,
                         "Desde_Info": f_desde, "Hasta_Info": f_hasta, "Inicio_Contrato": f_desde,
-                        "Tramos_IT": [], "Alta": f_desde.strftime("%d-%m-%Y"), "Baja": "ACTIVO"
+                        "Tramos_IT": [], "Alta": f_desde.strftime("%d-%m-%Y"), "Baja": "ACTIVO",
+                        "Cotizacion_IT": 0.0,
+                        "Cotizacion_IMS": 0.0,
+                        "Cotizacion_Desempleo": 0.0
                     })
         else:
             # TU LÓGICA ORIGINAL DE PRODUCCIÓN
@@ -59,6 +62,15 @@ def extraer_datos_idc(file_object):
             alta_m = re.search(r"ALTA:\s*(\d{2}-\d{2}-\d{4})", texto_completo)
             alta = alta_m.group(1).strip() if alta_m else "01-01-2000"
             
+            # 6.  NUEVA EXTRACCIÓN DE TIPOS DE COTIZACIÓN ---
+            it_m = re.search(r"IT:\s*([\d,.]+)", texto_completo)
+            ims_m = re.search(r"I\.M\.S\.:\s*([\d,.]+)", texto_completo)
+            des_m = re.search(r"DESEMPLEO:\s*([\d,.]+)", texto_completo)
+
+            cot_it = float(it_m.group(1).replace(',', '.')) if it_m else 0.0
+            cot_ims = float(ims_m.group(1).replace(',', '.')) if ims_m else 0.0
+            cot_des = float(des_m.group(1).replace(',', '.')) if des_m else 0.0
+            # -----------------------------------------------
             # Captura de Inicio Contrato según el patrón de Claudia
             inicio_con_m = re.search(r"INICIO CONTRATO DE TRABAJO.*?FECHA:\s*(\d{2}-\d{2}-\d{4})", texto_completo, re.DOTALL)
             inicio_contrato = inicio_con_m.group(1).strip() if inicio_con_m else alta
@@ -87,6 +99,9 @@ def extraer_datos_idc(file_object):
                 "Empresa": razon_social, "CTP": ctp, "Es_Autonomo": False,
                 "Desde_Info": f_desde_info, "Hasta_Info": f_hasta_info,
                 "Inicio_Contrato": datetime.strptime(inicio_contrato, "%d-%m-%Y"),
-                "Tramos_IT": tramos_it, "Alta": alta, "Baja": baja
+                "Tramos_IT": tramos_it, "Alta": alta, "Baja": baja,
+                "Cotizacion_IT": cot_it,
+                "Cotizacion_IMS": cot_ims,
+                "Cotizacion_Desempleo": cot_des
             })
     return resultados, texto_completo
