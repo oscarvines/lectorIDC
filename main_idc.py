@@ -113,6 +113,7 @@ if st.session_state.raw:
                 "CIF Empresa": cif_manual if es_aut else idcs_p[0]['NIF_Empresa'],
                 "Empresa": emp_manual if es_aut else idcs_p[0]['Empresa'],
                 "Estado": "⚠️ INCOMPLETO" if hay_hueco else "✅ OK",
+                "Contrato": idcs_p[0].get('Tipo_Contrato', 'N/A'),
                 "Inicio Contrato": f_contrato_orig.strftime("%d-%m-%Y"),
                 "Inicio Auditado": primer_dia.strftime("%d-%m-%Y") if primer_dia else "N/A",
                 "Fin Auditado": ultimo_dia.strftime("%d-%m-%Y") if ultimo_dia else "N/A",

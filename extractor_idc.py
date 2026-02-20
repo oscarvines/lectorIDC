@@ -38,7 +38,8 @@ def extraer_datos_idc(file_object):
                         "Tramos_IT": [], "Alta": f_desde.strftime("%d-%m-%Y"), "Baja": "ACTIVO",
                         "Cotizacion_IT": 0.0,
                         "Cotizacion_IMS": 0.0,
-                        "Cotizacion_Desempleo": 0.0
+                        "Cotizacion_Desempleo": 0.0,
+                        "Tipo_Contrato": "Autonomo"
                     })
         else:
             # TU LÓGICA ORIGINAL DE PRODUCCIÓN
@@ -70,7 +71,11 @@ def extraer_datos_idc(file_object):
             cot_it = float(it_m.group(1).replace(',', '.')) if it_m else 0.0
             cot_ims = float(ims_m.group(1).replace(',', '.')) if ims_m else 0.0
             cot_des = float(des_m.group(1).replace(',', '.')) if des_m else 0.0
-            # -----------------------------------------------
+            
+            # --- NUEVA EXTRACCIÓN TIPO DE CONTRATO ---
+            tipo_con_m = re.search(r"T\.CONTRATO:\s*(\d+)", texto_completo)
+            tipo_contrato = tipo_con_m.group(1) if tipo_con_m else "N/A"
+
             # Captura de Inicio Contrato según el patrón de Claudia
             inicio_con_m = re.search(r"INICIO CONTRATO DE TRABAJO.*?FECHA:\s*(\d{2}-\d{2}-\d{4})", texto_completo, re.DOTALL)
             inicio_contrato = inicio_con_m.group(1).strip() if inicio_con_m else alta
@@ -102,6 +107,7 @@ def extraer_datos_idc(file_object):
                 "Tramos_IT": tramos_it, "Alta": alta, "Baja": baja,
                 "Cotizacion_IT": cot_it,
                 "Cotizacion_IMS": cot_ims,
-                "Cotizacion_Desempleo": cot_des
+                "Cotizacion_Desempleo": cot_des,
+                "Tipo_Contrato": tipo_contrato
             })
     return resultados, texto_completo
