@@ -3,7 +3,17 @@ import pandas as pd
 from datetime import datetime, timedelta
 from extractor_idc import extraer_datos_idc
 import io
-
+def obtener_tipo_desempleo(codigo_contrato):
+    # Grupos de contratos según normativa
+    grupo_5_5 = ["100", "109", "130", "139", "150", "189", "200", "209", "230", "250", "289", "300", "389"]
+    grupo_6_7 = ["401", "402", "410", "421", "430", "441", "450", "501", "502", "510", "530", "541"]
+    
+    if str(codigo_contrato) in grupo_5_5:
+        return 5.5
+    elif str(codigo_contrato) in grupo_6_7:
+        return 6.7
+    else:
+        return 0.0
 st.set_page_config(page_title="LECTOR IDCS", layout="wide")
 st.title("📑 LECTOR IDCS")
 
@@ -96,7 +106,13 @@ if st.session_state.raw:
                 hay_hueco = True
 
         if d_alta > 0:
-            # Dedicación: Recuperamos lógica de producción
+            # 1. Recuperamos el código de contrato y calculamos el desempleo automático
+            # (Asegúrate de tener la función obtener_tipo_desempleo definida arriba)
+            cod_contrato = idcs_p[0].get('Tipo_Contrato', 'N/A')
+            tipo_des_auto = obtener_tipo_desempleo(cod_contrato)
+            
+            # 2. Calculamos el TOTAL: General (25.07) + Desempleo (5.5 o 6.7)
+            total_cotiz = round(tipo_general + tipo_des_auto, 2)
             ultimo_ctp = idcs_p[-1].get('CTP', 0)
             dedicacion_texto = "100%" if (es_aut or ultimo_ctp in [0, 1000]) else f"{(ultimo_ctp/10):.2f}%"
             res_final.append({
@@ -115,6 +131,8 @@ if st.session_state.raw:
                 "Horas Efectivas": round(h_t - h_i, 2),
                 "Dedicación": dedicacion_texto,
                 "Cotización General": tipo_general,
+                "Cotiz. Desempleo": tipo_des_auto,
+                "Total Cotización %": total_cotiz
             })
 
     if res_final:
